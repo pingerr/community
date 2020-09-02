@@ -1,15 +1,19 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.service.AlphaService;
+import com.nowcoder.community.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.rmi.ssl.SslRMIClientSocketFactory;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
@@ -25,7 +29,6 @@ public class AlphaController {
     @ResponseBody
     public String sayhello () {
         return "hello Spring Boot.";
-
     }
 
     @RequestMapping("/data")
@@ -148,6 +151,56 @@ public class AlphaController {
 
         return list;
     }
+
+    // cookies示例（更常用）
+
+    @RequestMapping(path = "/cookie/set", method = RequestMethod.GET)
+    @ResponseBody //返回字符串
+    public String setCookie(HttpServletResponse response) {
+        // 创建cookie
+        Cookie cookie = new Cookie("code", CommunityUtil.generateUUID());
+        // 设置cookie生效范围
+        cookie.setPath("/community/alpha");
+        // 设置cookie生存时间（默认关闭则消失）
+        cookie.setMaxAge(60 * 10);  // 10min
+        // 发送cookie
+        response.addCookie(cookie);
+
+        return "set cookie";
+    }
+
+    @RequestMapping(path = "/cookie/get", method = RequestMethod.GET)
+    @ResponseBody
+    public String getCookie(@CookieValue("code") String code) {
+        System.out.println(code);
+        return "get cookie";
+    }
+
+    // session示例(在服务端，更安全，但分布式部署会有问题)
+    // 解决分布式部署问题：
+    // 1、黏性session（分段指定服务器，不能保证负载均衡）
+    // 2、同步session（服务器之间通信，耦合，低效）
+    // 3、共享session（指定一台专门存放session的服务器，其他服务器都从这台获取，如果挂掉就全完了）
+    // 常用方法：尽量存在cookie中，有安全隐患的存在数据库中（数据在硬盘上，访问速度更慢——> 存到Redis中更快）
+
+    @RequestMapping(path = "/session/set", method = RequestMethod.GET)
+    @ResponseBody
+    public String setSession(HttpSession session) {
+        //SpringMVC自动实例化Session
+        session.setAttribute("id", 1);
+        session.setAttribute("name", "Test");
+        return "set session";
+    }
+
+    @RequestMapping(path = "/session/get", method = RequestMethod.GET)
+    @ResponseBody
+    public String getSession(HttpSession session) {
+        //SpringMVC自动实例化Session
+        System.out.println(session.getAttribute("id"));
+        System.out.println(session.getAttribute("name"));
+        return "get session";
+    }
+
 }
 // Controller 处理浏览器请求，会调用 Service 业务组件处理当前业务
 // Service 业务组件会调用 Dao 访问数据库
