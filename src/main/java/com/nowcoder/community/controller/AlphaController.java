@@ -201,6 +201,15 @@ public class AlphaController {
         return "get session";
     }
 
+    // Ajax示例 （异步请求，返回JSON字符串，不返回页面
+    @RequestMapping(path = "/ajax", method = RequestMethod.POST)
+    @ResponseBody
+    public String testAjax(String name, int age) {
+        System.out.println(name);
+        System.out.println(age);
+        return CommunityUtil.getJsonString(0, "操作成功！");
+    }
+
 }
 // Controller 处理浏览器请求，会调用 Service 业务组件处理当前业务
 // Service 业务组件会调用 Dao 访问数据库
