@@ -36,4 +36,20 @@ public interface CommunityConstant {
      * 实体类型：评论
      */
     int ENTITY_TYPE_COMMENT = 2;
+
+    /**
+     * 权限：普通用户
+     */
+    String AUTHORITY_USER = "user";
+
+    /**
+     * 权限：管理员
+     */
+    String AUTHORITY_ADMIN = "admin";
+
+    /**
+     * 权限：版主
+     */
+    String AUTHORITY_MODERATOR = "moderater";
+
 }

@@ -2,6 +2,7 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
@@ -20,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -41,6 +44,9 @@ public class UserController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
 
     @LoginRequired // 必须登录后才可用
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -107,6 +113,26 @@ public class UserController {
         } catch (IOException e) {
             logger.error("获取图像失败: " + e.getMessage());
         }
+    }
+
+    // 个人主页
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在");
+        }
+
+        // 用户 model。add
+        // 点赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        // modeladd
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("likeCount", likeCount);
+        map.put("user", user);
+
+        return CommunityUtil.getJsonString(0, null, map);
     }
 
 }

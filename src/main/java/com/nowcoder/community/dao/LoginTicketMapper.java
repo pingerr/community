@@ -4,6 +4,7 @@ import com.nowcoder.community.entity.LoginTicket;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
+@Deprecated // 不推荐使用，该用Redis存储凭证
 public interface LoginTicketMapper {
 
     @Insert({

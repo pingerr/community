@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
+@Deprecated
 public class AlphaInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(AlphaInterceptor.class);
